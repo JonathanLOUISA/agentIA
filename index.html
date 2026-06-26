@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HelpDesk IA</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">HD</div>
+          <div>
+            <h1>HelpDesk IA</h1>
+            <p id="mode-label">Initialisation</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Navigation principale">
+          <button class="nav-item active" data-view="chat-view" type="button">
+            <span aria-hidden="true">⌁</span>
+            Chat
+          </button>
+          <button class="nav-item" data-view="knowledge-view" type="button">
+            <span aria-hidden="true">▤</span>
+            Base
+          </button>
+          <button class="nav-item" data-view="tickets-view" type="button">
+            <span aria-hidden="true">◫</span>
+            Tickets
+          </button>
+          <button class="nav-item" data-view="settings-view" type="button">
+            <span aria-hidden="true">⚙</span>
+            Configuration
+          </button>
+        </nav>
+
+        <div class="sidebar-metrics" aria-label="Indicateurs">
+          <div>
+            <span id="stat-articles">0</span>
+            <small>Articles</small>
+          </div>
+          <div>
+            <span id="stat-tickets">0</span>
+            <small>Tickets</small>
+          </div>
+          <div>
+            <span id="stat-assets">0</span>
+            <small>Assets</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="view active" id="chat-view" aria-labelledby="chat-title">
+          <header class="workspace-header">
+            <div>
+              <p class="eyebrow">Support niveau 1</p>
+              <h2 id="chat-title">Assistant technicien</h2>
+            </div>
+            <button class="ghost-button" id="clear-chat" type="button">Nouvelle conversation</button>
+          </header>
+
+          <div class="chat-layout">
+            <section class="conversation-panel" aria-label="Conversation">
+              <div class="message-list" id="message-list">
+                <article class="message assistant">
+                  <div class="avatar" aria-hidden="true">IA</div>
+                  <div class="bubble">
+                    <p>Bonjour. Décris l'incident, cite un ticket ou un asset si tu en as un.</p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="quick-actions" aria-label="Questions rapides">
+                <button type="button" data-prompt="Le VPN ne se connecte pas après changement de mot de passe.">VPN</button>
+                <button type="button" data-prompt="Quel est le statut du ticket INC-1002 ?">INC-1002</button>
+                <button type="button" data-prompt="L'imprimante PRN-2 est hors ligne.">PRN-2</button>
+                <button type="button" data-prompt="Un utilisateur a reçu un mail de phishing.">Phishing</button>
+              </div>
+
+              <form class="composer" id="chat-form">
+                <label class="sr-only" for="chat-input">Message</label>
+                <textarea id="chat-input" name="message" rows="2" placeholder="Message utilisateur, erreur, ticket, asset..." required></textarea>
+                <button class="primary-button" type="submit">Envoyer</button>
+              </form>
+            </section>
+
+            <aside class="source-panel" aria-labelledby="sources-title">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">RAG</p>
+                  <h3 id="sources-title">Sources</h3>
+                </div>
+                <span class="mode-pill" id="answer-mode">Local</span>
+              </div>
+              <div class="source-list empty" id="source-list">Aucune source sélectionnée.</div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="knowledge-view" aria-labelledby="knowledge-title">
+          <header class="workspace-header">
+            <div>
+              <p class="eyebrow">Documentation</p>
+              <h2 id="knowledge-title">Base de connaissances</h2>
+            </div>
+            <button class="primary-button" id="toggle-article-form" type="button">Ajouter</button>
+          </header>
+
+          <div class="toolbar">
+            <label class="sr-only" for="article-search">Recherche article</label>
+            <input id="article-search" type="search" placeholder="Rechercher dans les procédures" />
+          </div>
+
+          <form class="editor-form hidden" id="article-form">
+            <div class="form-grid">
+              <label>
+                Titre
+                <input name="title" required />
+              </label>
+              <label>
+                Catégorie
+                <input name="category" value="Support" />
+              </label>
+              <label>
+                Tags
+                <input name="tags" placeholder="vpn, mfa, réseau" />
+              </label>
+            </div>
+            <label>
+              Contenu
+              <textarea name="content" rows="8" required></textarea>
+            </label>
+            <div class="form-actions">
+              <button class="ghost-button" id="cancel-article" type="button">Annuler</button>
+              <button class="primary-button" type="submit">Enregistrer</button>
+            </div>
+          </form>
+
+          <div class="item-grid" id="article-list"></div>
+        </section>
+
+        <section class="view" id="tickets-view" aria-labelledby="tickets-title">
+          <header class="workspace-header">
+            <div>
+              <p class="eyebrow">Support</p>
+              <h2 id="tickets-title">Tickets</h2>
+            </div>
+            <button class="primary-button" id="toggle-ticket-form" type="button">Créer</button>
+          </header>
+
+          <div class="toolbar split">
+            <label class="sr-only" for="ticket-search">Recherche ticket</label>
+            <input id="ticket-search" type="search" placeholder="Rechercher un ticket" />
+            <label class="sr-only" for="ticket-status">Statut</label>
+            <select id="ticket-status">
+              <option value="">Tous les statuts</option>
+              <option>Ouvert</option>
+              <option>En cours</option>
+              <option>Résolu</option>
+            </select>
+          </div>
+
+          <form class="editor-form hidden" id="ticket-form">
+            <div class="form-grid">
+              <label>
+                Demandeur
+                <input name="requester" required />
+              </label>
+              <label>
+                Catégorie
+                <input name="category" value="Support" />
+              </label>
+              <label>
+                Priorité
+                <select name="priority">
+                  <option>P4</option>
+                  <option selected>P3</option>
+                  <option>P2</option>
+                  <option>P1</option>
+                </select>
+              </label>
+              <label>
+                Statut
+                <select name="status">
+                  <option selected>Ouvert</option>
+                  <option>En cours</option>
+                  <option>Résolu</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              Résumé
+              <textarea name="summary" rows="4" required></textarea>
+            </label>
+            <label>
+              Résolution
+              <textarea name="resolution" rows="3"></textarea>
+            </label>
+            <div class="form-actions">
+              <button class="ghost-button" id="cancel-ticket" type="button">Annuler</button>
+              <button class="primary-button" type="submit">Enregistrer</button>
+            </div>
+          </form>
+
+          <div class="ticket-list" id="ticket-list"></div>
+        </section>
+
+        <section class="view" id="settings-view" aria-labelledby="settings-title">
+          <header class="workspace-header">
+            <div>
+              <p class="eyebrow">Environnement</p>
+              <h2 id="settings-title">Configuration</h2>
+            </div>
+            <button class="ghost-button" id="refresh-config" type="button">Actualiser</button>
+          </header>
+
+          <div class="settings-grid">
+            <article>
+              <h3>Mode IA</h3>
+              <p id="config-llm">Chargement</p>
+            </article>
+            <article>
+              <h3>Base SQLite</h3>
+              <p id="config-db">Chargement</p>
+            </article>
+            <article>
+              <h3>Protection admin</h3>
+              <p id="config-admin">Chargement</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
