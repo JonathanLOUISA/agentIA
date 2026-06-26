@@ -6,12 +6,13 @@ Cette version fonctionne sans serveur Python : les articles, tickets et assets s
 
 ## Publication GitHub Pages
 
-1. Créer un dépôt GitHub.
-2. Envoyer ces fichiers à la racine du dépôt.
-3. Aller dans `Settings > Pages`.
-4. Source : `Deploy from a branch`.
-5. Branch : `main`, folder : `/root`.
-6. Ouvrir l'URL `https://<utilisateur>.github.io/<depot>/`.
+Le site est prévu pour être publié à cette adresse :
+
+```text
+https://jonathanlouisa.github.io/agentIA/
+```
+
+Le workflow `.github/workflows/pages.yml` déploie automatiquement GitHub Pages à chaque push sur `main`.
 
 ## Limites
 
